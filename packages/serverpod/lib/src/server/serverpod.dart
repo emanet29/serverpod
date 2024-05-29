@@ -349,27 +349,48 @@ class Serverpod {
     }
     
     // EMANET GAMES : ssl certificate
-    final chain = Platform.script.resolve(this.config.apiServer.certificatChain).toFilePath();
-    final key = Platform.script.resolve(this.config.apiServer.privateKey).toFilePath();
+    if(this.config.apiServer.certificatChain != null){
+      var chain = Platform.script.resolve(this.config.apiServer.certificatChain!).toFilePath();
+      var key = Platform.script.resolve(this.config.apiServer.privateKey!).toFilePath();
+
+      server = Server(
+        serverpod: this,
+        serverId: serverId,
+        port: this.config.apiServer.port,
+        serializationManager: serializationManager,
+        databasePoolManager: _databasePoolManager,
+        passwords: _passwords,
+        runMode: _runMode,
+        caches: caches,
+        authenticationHandler: authHandler,
+        whitelistedExternalCalls: whitelistedExternalCalls,
+        endpoints: endpoints,
+        httpResponseHeaders: httpResponseHeaders,
+        httpOptionsResponseHeaders: httpOptionsResponseHeaders,
+        securityContext: SecurityContext()// EMANET GAMES
+        ..useCertificateChain(chain)
+        ..usePrivateKey(key)
+      );
+    }else{
+      server = Server(
+        serverpod: this,
+        serverId: serverId,
+        port: this.config.apiServer.port,
+        serializationManager: serializationManager,
+        databasePoolManager: _databasePoolManager,
+        passwords: _passwords,
+        runMode: _runMode,
+        caches: caches,
+        authenticationHandler: authHandler,
+        whitelistedExternalCalls: whitelistedExternalCalls,
+        endpoints: endpoints,
+        httpResponseHeaders: httpResponseHeaders,
+        httpOptionsResponseHeaders: httpOptionsResponseHeaders,
+      );
+    }
     
-    server = Server(
-      serverpod: this,
-      serverId: serverId,
-      port: this.config.apiServer.port,
-      serializationManager: serializationManager,
-      databasePoolManager: _databasePoolManager,
-      passwords: _passwords,
-      runMode: _runMode,
-      caches: caches,
-      authenticationHandler: authHandler,
-      whitelistedExternalCalls: whitelistedExternalCalls,
-      endpoints: endpoints,
-      httpResponseHeaders: httpResponseHeaders,
-      httpOptionsResponseHeaders: httpOptionsResponseHeaders,
-      securityContext: SecurityContext()// EMANET GAMES
-      ..useCertificateChain(chain)
-      ..usePrivateKey(key)
-    );
+
+    
     endpoints.initializeEndpoints(server);
 
     if (Features.enableFutureCalls) {
