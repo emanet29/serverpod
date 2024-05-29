@@ -9,6 +9,7 @@ repository: https://github.com/emanet29/serverpod/
 homepage: https://serverpod.dev
 issue_tracker: https://github.com/serverpod/serverpod/issues
 documentation: https://docs.serverpod.dev
+publish_to: 'none'
 
 topics:
   - backend
@@ -37,8 +38,7 @@ dependencies:
   yaml: ^3.1.1
   #serverpod_shared: 2.0.0
   serverpod_shared:
-    publish_to: none
-      path: ../serverpod_shared
+    path: ../serverpod_shared
   serverpod_serialization: 2.0.0
 
 dev_dependencies:
