@@ -166,8 +166,8 @@ class ServerConfig {
       publicHost: serverSetup['publicHost'] as String,
       publicPort: serverSetup['publicPort'] as int,
       publicScheme: serverSetup['publicScheme'] as String,
-      certificatChain: serverSetup['certificatChain'] as String,
-      privateKey: serverSetup['privateKey'] as String,
+      certificatChain: serverSetup['certificatChain'] as String?,
+      privateKey: serverSetup['privateKey'] as String?,
     );
   }
   
