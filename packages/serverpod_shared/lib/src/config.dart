@@ -170,7 +170,7 @@ class ServerConfig {
       privateKey: serverSetup['privateKey'] as String,
     );
   }
-
+  
   @override
   String toString() {
     var str = '';
