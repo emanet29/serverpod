@@ -343,10 +343,14 @@ class Serverpod {
     );
 
     var authHandler = authenticationHandler;
-
+    
     if (Features.enableDefaultAuthenticationHandler) {
       authHandler ??= defaultAuthenticationHandler;
     }
+    
+    // EMANET GAMES : ssl certificate
+    final chain = Platform.script.resolve(this.config.apiServer.certificatChain).toFilePath();
+    final key = Platform.script.resolve(this.config.apiServer.privateKey).toFilePath();
 
     server = Server(
       serverpod: this,
@@ -362,6 +366,9 @@ class Serverpod {
       endpoints: endpoints,
       httpResponseHeaders: httpResponseHeaders,
       httpOptionsResponseHeaders: httpOptionsResponseHeaders,
+      securityContext: SecurityContext()// EMANET GAMES
+      ..useCertificateChain(chain)
+      ..usePrivateKey(key)
     );
     endpoints.initializeEndpoints(server);
 
