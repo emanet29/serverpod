@@ -57,6 +57,8 @@ class ServerpodConfig {
         publicHost: 'localhost',
         publicPort: 8080,
         publicScheme: 'http',
+        certificatChain: '',
+        privateKey: '',
       ),
     );
   }
@@ -151,13 +153,12 @@ class ServerConfig {
   /// Public facing scheme, i.e. http or https.
   final String publicScheme;
 
+  // EMANET GAMES : SSL Certificate
+  String? certificatChain;
+  String? privateKey;
+
   ///
-  ServerConfig({
-    required this.port,
-    required this.publicScheme,
-    required this.publicHost,
-    required this.publicPort,
-  });
+  ServerConfig({required this.port, required this.publicScheme, required this.publicHost, required this.publicPort, this.certificatChain, this.privateKey});
 
   factory ServerConfig._fromJson(Map serverSetup) {
     return ServerConfig(
@@ -165,6 +166,8 @@ class ServerConfig {
       publicHost: serverSetup['publicHost'] as String,
       publicPort: serverSetup['publicPort'] as int,
       publicScheme: serverSetup['publicScheme'] as String,
+      certificatChain: serverSetup['certificatChain'] as String,
+      privateKey: serverSetup['privateKey'] as String,
     );
   }
 
@@ -175,7 +178,8 @@ class ServerConfig {
     str += '$_name public host: $publicHost\n';
     str += '$_name public port: $publicPort\n';
     str += '$_name public scheme: $publicScheme\n';
-
+    str += '$_name certificatChain: $certificatChain\n';
+    str += '$_name privateKey: $privateKey\n';
     return str;
   }
 }
