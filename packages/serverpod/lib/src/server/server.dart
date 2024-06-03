@@ -151,11 +151,11 @@ class Server {
 
     _httpServer = httpServer;
     httpServer.autoCompress = true;
-
+    
     try {
       await for (var request in httpServer) {
         serverpod.logVerbose(
-          'received request: ${request.method} ${request.uri.path}',
+          'received request: ${request.method} ${request.uri.path} ${request.uri.port} ${request.uri.host} ${request.remoteIpAddress} ${request.uri.origin} ${request.uri}',
         );
 
         try {

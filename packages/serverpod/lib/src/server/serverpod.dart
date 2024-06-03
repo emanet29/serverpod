@@ -352,7 +352,7 @@ class Serverpod {
     if(this.config.apiServer.certificatChain != null){
       var chain = Platform.script.resolve(this.config.apiServer.certificatChain!).toFilePath();
       var key = Platform.script.resolve(this.config.apiServer.privateKey!).toFilePath();
-
+      
       server = Server(
         serverpod: this,
         serverId: serverId,
@@ -443,7 +443,7 @@ class Serverpod {
   /// Starts the Serverpod and all [Server]s that it manages.
   Future<void> start() async {
     _startedTime = DateTime.now().toUtc();
-
+    
     await runZonedGuarded(() async {
       // Register cloud store endpoint if we're using the database cloud store
       if (storage['public'] is DatabaseCloudStorage ||
