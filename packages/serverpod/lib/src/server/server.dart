@@ -155,7 +155,7 @@ class Server {
     try {
       await for (var request in httpServer) {
         serverpod.logVerbose(
-          'received request: ${request.method} ${request.uri.path} ${request.uri.port} ${request.uri.host} ${request.remoteIpAddress} ${request.uri.origin}',
+          'received request: ${request.method} ${request.uri.path} ${request.uri.port} ${request.uri.host} ${request.remoteIpAddress}',
         );
 
         try {
