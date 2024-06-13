@@ -11,7 +11,7 @@ import 'package:serverpod/src/server/command_line_args.dart';
 /// [Serverpod] is restarted.
 class FutureCallManager {
   final Server _server;
-
+  
   /// Called when pending future calls have been completed, if the server is
   /// running in [ServerpodRole.maintenance] mode.
   final void Function() onCompleted;

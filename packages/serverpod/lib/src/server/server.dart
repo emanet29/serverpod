@@ -112,6 +112,12 @@ class Server {
     HttpServer httpServer;
     try {
       if (securityContext != null) {
+        // EMANET GAMES
+        /*httpServer = await HttpServer.bindSecure(
+          InternetAddress.anyIPv4,
+          port,
+          securityContext!,
+        );*/
         httpServer = await HttpServer.bindSecure(
           InternetAddress.anyIPv6,
           port,
@@ -128,7 +134,7 @@ class Server {
       stderr.writeln('${DateTime.now().toUtc()} ERROR: $e');
       return false;
     }
-
+    
     try {
       _runServer(httpServer);
     } catch (e, stackTrace) {
@@ -148,7 +154,7 @@ class Server {
     serverpod.logVerbose(
       'runServer address: ${httpServer.address}, port: ${httpServer.port}',
     );
-
+    
     _httpServer = httpServer;
     httpServer.autoCompress = true;
     
@@ -197,7 +203,7 @@ class Server {
         stderr.writeln(
             'Malformed call, invalid uri from ${request.connectionInfo!.remoteAddress.address}');
       }
-
+      
       request.response.statusCode = HttpStatus.badRequest;
       await request.response.close();
       return;
