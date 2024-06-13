@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dart-version: ['3.1.0']
+        dart-version: ['3.2.0']
     steps:
       - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1.3
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter-version: ['3.13.0']
+        flutter-version: ['3.16.0']
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter-version: ['3.19.5']
+        flutter-version: ['3.22.0']
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -90,17 +90,18 @@ jobs:
       - name: Run serverpod update pubspecs
         run: bash util/run_tests_update_pubspecs
 
-  unit_tests:
-    name: Unit tests
+  unit_io_tests:
+    name: Unit tests IO
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
         os: [windows-latest, ubuntu-latest]
         path:
           [
             "tools/serverpod_cli",
             "packages/serverpod",
+            "packages/serverpod_client",
             "packages/serverpod_shared",
             "packages/serverpod_serialization",
             "tests/serverpod_test_client",
@@ -116,26 +117,61 @@ jobs:
         run: dart test
         working-directory: ${{ matrix.path }}
 
-  single_server_tests:
-    name: Serverpod tests
-    runs-on: ubuntu-latest
+  unit_web_tests:
+    name: Unit tests Web
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
+        os: [ubuntu-latest]
+        path:
+          [
+            "packages/serverpod_client",
+          ]
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.flutter-version }}
-      - name: Run single server tests
-        run: util/run_tests_single_server
+      - uses: browser-actions/setup-chrome@v1
+      - name: Run unit tests
+        run: dart test -p chrome
+        working-directory: ${{ matrix.path }}
+  
+  e2e_io_tests:
+    name: Serverpod E2E IO tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter-version: ['3.16.0', '3.22.0']
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.flutter-version }}
+      - name: Run e2e tests
+        run: util/run_tests_e2e
+    
+  e2e_web_tests:
+    name: Serverpod E2E web tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter-version: ['3.16.0', '3.22.0']
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.flutter-version }}
+      - name: Run e2e tests
+        run: util/run_tests_e2e firefox
 
   integration_tests:
     name: Serverpod integration tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -150,7 +186,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
         os: [ubuntu-latest]
         path: ["tests/bootstrap_project"]
     steps:
@@ -177,7 +213,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
@@ -192,7 +228,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flutter-version: ['3.13.0', '3.19.5']
+        flutter-version: ['3.16.0', '3.22.0']
         os: [ubuntu-latest]
         path: ["tests/serverpod_cli_e2e_test"]
     steps:
