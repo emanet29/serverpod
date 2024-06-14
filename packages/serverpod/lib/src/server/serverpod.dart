@@ -369,7 +369,8 @@ class Serverpod {
         httpOptionsResponseHeaders: httpOptionsResponseHeaders,
         securityContext: SecurityContext()// EMANET GAMES
         ..useCertificateChain(chain)
-        ..usePrivateKey(key)
+        ..usePrivateKey(key),
+        ipConfig: this.config.apiServer.ipConfig
       );
     }else{
       server = Server(
@@ -386,6 +387,7 @@ class Serverpod {
         endpoints: endpoints,
         httpResponseHeaders: httpResponseHeaders,
         httpOptionsResponseHeaders: httpOptionsResponseHeaders,
+        ipConfig: this.config.apiServer.ipConfig
       );
     }
     
@@ -670,7 +672,14 @@ class Serverpod {
   Future<bool> _startInsightsServer() async {
     var endpoints = internal.Endpoints();
 
-    _serviceServer = Server(
+
+
+    // EMANET GAMES : ssl certificate
+    if(this.config.apiServer.certificatChain != null){
+      var chain = Platform.script.resolve(this.config.insightsServer!.certificatChain!).toFilePath();
+      var key = Platform.script.resolve(this.config.insightsServer!.privateKey!).toFilePath();
+      
+      _serviceServer = Server(
       serverpod: this,
       serverId: serverId,
       port: config.insightsServer!.port,
@@ -684,7 +693,31 @@ class Serverpod {
       endpoints: endpoints,
       httpResponseHeaders: httpResponseHeaders,
       httpOptionsResponseHeaders: httpOptionsResponseHeaders,
+      securityContext: SecurityContext()// EMANET GAMES
+        ..useCertificateChain(chain)
+        ..usePrivateKey(key),
+      ipConfig: this.config.insightsServer!.ipConfig
     );
+    }else{
+      _serviceServer = Server(
+        serverpod: this,
+        serverId: serverId,
+        port: config.insightsServer!.port,
+        serializationManager: _internalSerializationManager,
+        databasePoolManager: _databasePoolManager,
+        passwords: _passwords,
+        runMode: _runMode,
+        name: 'Insights',
+        caches: caches,
+        authenticationHandler: serviceAuthenticationHandler,
+        endpoints: endpoints,
+        httpResponseHeaders: httpResponseHeaders,
+        httpOptionsResponseHeaders: httpOptionsResponseHeaders,
+        ipConfig: this.config.insightsServer!.ipConfig
+      );
+    }
+
+    
     endpoints.initializeEndpoints(_serviceServer!);
 
     var success = await _serviceServer!.start();

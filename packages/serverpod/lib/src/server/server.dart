@@ -56,6 +56,9 @@ class Server {
   /// Security context if the server is running over https.
   final SecurityContext? securityContext;
 
+  // EMANET GAMES : config ip type
+  final InternetAddress ipConfig;
+
   /// Responsible for dispatching calls to the correct [Endpoint] methods.
   final EndpointDispatch endpoints;
 
@@ -99,6 +102,7 @@ class Server {
     String? name,
     required this.caches,
     this.securityContext,
+    required this.ipConfig,
     this.whitelistedExternalCalls,
     required this.endpoints,
     required this.httpResponseHeaders,
@@ -113,18 +117,19 @@ class Server {
     try {
       if (securityContext != null) {
         // EMANET GAMES
-        /*httpServer = await HttpServer.bindSecure(
-          InternetAddress.anyIPv4,
-          port,
-          securityContext!,
-        );*/
         httpServer = await HttpServer.bindSecure(
-          InternetAddress.anyIPv6,
+          ipConfig,
           port,
           securityContext!,
         );
+        /*httpServer = await HttpServer.bindSecure(
+          InternetAddress.anyIPv6,
+          port,
+          securityContext!,
+        );*/
       } else {
-        httpServer = await HttpServer.bind(InternetAddress.anyIPv6, port);
+        httpServer = await HttpServer.bind(ipConfig, port);
+        //httpServer = await HttpServer.bind(InternetAddress.anyIPv6, port);
       }
     } catch (e) {
       stderr.writeln(
@@ -134,12 +139,11 @@ class Server {
       stderr.writeln('${DateTime.now().toUtc()} ERROR: $e');
       return false;
     }
-    
+
     try {
       _runServer(httpServer);
     } catch (e, stackTrace) {
-      stderr.writeln(
-          '${DateTime.now().toUtc()} Internal server error. Failed to run server.');
+      stderr.writeln('${DateTime.now().toUtc()} Internal server error. Failed to run server.');
       stderr.writeln('$e');
       stderr.writeln('$stackTrace');
       return false;
@@ -154,10 +158,10 @@ class Server {
     serverpod.logVerbose(
       'runServer address: ${httpServer.address}, port: ${httpServer.port}',
     );
-    
+
     _httpServer = httpServer;
     httpServer.autoCompress = true;
-    
+
     try {
       await for (var request in httpServer) {
         serverpod.logVerbose(
@@ -175,8 +179,7 @@ class Server {
         }
       }
     } catch (e, stackTrace) {
-      stderr.writeln(
-          '${DateTime.now().toUtc()} Internal server error. httpSever.listen failed.');
+      stderr.writeln('${DateTime.now().toUtc()} Internal server error. httpSever.listen failed.');
       stderr.writeln('$e');
       stderr.writeln('$stackTrace');
     }
@@ -186,8 +189,7 @@ class Server {
 
   //TODO: encode analyze
   void _handleRequest(HttpRequest request) async {
-    serverpod
-        .logVerbose('handleRequest: ${request.method} ${request.uri.path}');
+    serverpod.logVerbose('handleRequest: ${request.method} ${request.uri.path}');
 
     for (var header in httpResponseHeaders.entries) {
       request.response.headers.add(header.key, header.value);
@@ -200,10 +202,9 @@ class Server {
     } catch (e) {
       if (serverpod.runtimeSettings.logMalformedCalls) {
         // TODO: Specific log for this?
-        stderr.writeln(
-            'Malformed call, invalid uri from ${request.connectionInfo!.remoteAddress.address}');
+        stderr.writeln('Malformed call, invalid uri from ${request.connectionInfo!.remoteAddress.address}');
       }
-      
+
       request.response.statusCode = HttpStatus.badRequest;
       await request.response.close();
       return;
@@ -287,8 +288,7 @@ class Server {
       try {
         body = await _readBody(request);
       } catch (e, stackTrace) {
-        stderr.writeln(
-            '${DateTime.now().toUtc()} Internal server error. Failed to read body of request.');
+        stderr.writeln('${DateTime.now().toUtc()} Internal server error. Failed to read body of request.');
         stderr.writeln('$e');
         stderr.writeln('$stackTrace');
         request.response.statusCode = HttpStatus.badRequest;
@@ -324,8 +324,7 @@ class Server {
       return;
     } else if (result is ResultInternalServerError) {
       request.response.statusCode = HttpStatus.internalServerError;
-      request.response.writeln(
-          'Internal server error. Call log id: ${result.sessionLogId}');
+      request.response.writeln('Internal server error. Call log id: ${result.sessionLogId}');
       await request.response.close();
       return;
     } else if (result is ResultStatusCode) {
@@ -342,8 +341,7 @@ class Server {
     } else if (result is ResultSuccess) {
       // Set content type.
       if (!result.sendByteDataAsRaw) {
-        request.response.headers.contentType =
-            ContentType('application', 'json', charset: 'utf-8');
+        request.response.headers.contentType = ContentType('application', 'json', charset: 'utf-8');
       }
 
       // Send the response
@@ -375,8 +373,7 @@ class Server {
     return const Utf8Decoder().convert(data);
   }
 
-  Future<Result> _handleUriCall(
-      Uri uri, String body, HttpRequest request) async {
+  Future<Result> _handleUriCall(Uri uri, String body, HttpRequest request) async {
     var path = uri.pathSegments.join('/');
     return endpoints.handleUriCall(this, path, uri, body, request);
   }
@@ -455,13 +452,11 @@ class Server {
             try {
               session.sessionLogs.currentEndpoint = endpointName;
 
-              message =
-                  serializationManager.deserializeByClassName(serialization);
+              message = serializationManager.deserializeByClassName(serialization);
 
               if (message == null) throw Exception('Streamed message was null');
 
-              await endpointConnector.endpoint
-                  .handleStreamMessage(session, message);
+              await endpointConnector.endpoint.handleStreamMessage(session, message);
             } catch (e, s) {
               messageError = e;
               messageStackTrace = s;
@@ -471,8 +466,7 @@ class Server {
               stderr.writeln('$s');
             }
 
-            var duration =
-                DateTime.now().difference(startTime).inMicroseconds / 1000000.0;
+            var duration = DateTime.now().difference(startTime).inMicroseconds / 1000000.0;
             var logManager = session.serverpod.logManager;
 
             var slow = duration >=

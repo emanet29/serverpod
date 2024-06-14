@@ -59,6 +59,7 @@ class ServerpodConfig {
         publicScheme: 'http',
         certificatChain: '',
         privateKey: '',
+        ipConfig: InternetAddress.anyIPv6
       ),
     );
   }
@@ -179,11 +180,12 @@ class ServerConfig {
   final String publicScheme;
 
   // EMANET GAMES : SSL Certificate
-  String? certificatChain;
-  String? privateKey;
+  final String? certificatChain;
+  final String? privateKey;
+  final InternetAddress ipConfig;
   
   /// Creates a new [ServerConfig].
-  ServerConfig({required this.port, required this.publicScheme, required this.publicHost, required this.publicPort, this.certificatChain, this.privateKey});
+  ServerConfig({required this.port, required this.publicScheme, required this.publicHost, required this.publicPort, this.certificatChain, this.privateKey, required this.ipConfig});
 
   factory ServerConfig._fromJson(Map serverSetup, String name) {
     _validateJsonConfig(
@@ -204,6 +206,7 @@ class ServerConfig {
       publicScheme: serverSetup['publicScheme'],
       certificatChain: serverSetup['certificatChain'],
       privateKey: serverSetup['privateKey'],
+      ipConfig: serverSetup['ipConfig'],
     );
   }
   
@@ -216,6 +219,7 @@ class ServerConfig {
     str += '$_name public scheme: $publicScheme\n';
     str += '$_name certificatChain: $certificatChain\n';
     str += '$_name privateKey: $privateKey\n';
+    str += '$_name ipConfig: $ipConfig\n';
     return str;
   }
 }
