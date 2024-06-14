@@ -59,7 +59,7 @@ class ServerpodConfig {
         publicScheme: 'http',
         certificatChain: '',
         privateKey: '',
-        ipConfig: InternetAddress.anyIPv6
+        ipConfig: ''
       ),
     );
   }
@@ -182,7 +182,7 @@ class ServerConfig {
   // EMANET GAMES : SSL Certificate
   final String? certificatChain;
   final String? privateKey;
-  final InternetAddress ipConfig;
+  final String ipConfig;
   
   /// Creates a new [ServerConfig].
   ServerConfig({required this.port, required this.publicScheme, required this.publicHost, required this.publicPort, this.certificatChain, this.privateKey, required this.ipConfig});

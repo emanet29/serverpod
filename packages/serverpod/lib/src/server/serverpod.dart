@@ -370,7 +370,7 @@ class Serverpod {
         securityContext: SecurityContext()// EMANET GAMES
         ..useCertificateChain(chain)
         ..usePrivateKey(key),
-        ipConfig: this.config.apiServer.ipConfig
+        ipConfig: this.config.apiServer.ipConfig == 'ipv4' ? InternetAddress.anyIPv4 : InternetAddress.anyIPv6
       );
     }else{
       server = Server(
@@ -387,7 +387,7 @@ class Serverpod {
         endpoints: endpoints,
         httpResponseHeaders: httpResponseHeaders,
         httpOptionsResponseHeaders: httpOptionsResponseHeaders,
-        ipConfig: this.config.apiServer.ipConfig
+        ipConfig: this.config.apiServer.ipConfig == 'ipv4' ? InternetAddress.anyIPv4 : InternetAddress.anyIPv6
       );
     }
     
@@ -696,7 +696,7 @@ class Serverpod {
       securityContext: SecurityContext()// EMANET GAMES
         ..useCertificateChain(chain)
         ..usePrivateKey(key),
-      ipConfig: this.config.insightsServer!.ipConfig
+      ipConfig: this.config.insightsServer!.ipConfig == 'ipv4' ? InternetAddress.anyIPv4 : InternetAddress.anyIPv6 
     );
     }else{
       _serviceServer = Server(
@@ -713,7 +713,7 @@ class Serverpod {
         endpoints: endpoints,
         httpResponseHeaders: httpResponseHeaders,
         httpOptionsResponseHeaders: httpOptionsResponseHeaders,
-        ipConfig: this.config.insightsServer!.ipConfig
+        ipConfig: this.config.insightsServer!.ipConfig == 'ipv4' ? InternetAddress.anyIPv4 : InternetAddress.anyIPv6
       );
     }
 
